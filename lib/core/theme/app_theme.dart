@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 import 'app_text_styles.dart';
 
@@ -11,11 +10,10 @@ import 'app_text_styles.dart';
 abstract final class AppTheme {
   /// Light theme definition complying with the 99.co mobile design system.
   static ThemeData get light {
-    final baseTextTheme = ThemeData.light().textTheme;
-    final nunitoTextTheme = GoogleFonts.nunitoSansTextTheme(baseTextTheme);
-
     return ThemeData(
       useMaterial3: true,
+      fontFamily: AppTextStyles.fontFamily,
+      fontFamilyFallback: AppTextStyles.fontFallback,
       scaffoldBackgroundColor: AppColors.background,
       colorScheme: const ColorScheme.light(
         primary: AppColors.primary,
@@ -25,7 +23,6 @@ abstract final class AppTheme {
         onPrimary: AppColors.surface,
         onSurface: AppColors.primary,
       ),
-      textTheme: nunitoTextTheme,
       appBarTheme: AppBarTheme(
         backgroundColor: AppColors.surface,
         foregroundColor: AppColors.primary,

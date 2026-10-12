@@ -36,17 +36,17 @@ Study notes for explaining every file in the codebase during a technical intervi
 ---
 
 ### 📘 Walkthrough: `lib/core/theme/app_text_styles.dart`
-**Role in the architecture:** Design token layer (`core/theme`); defines typography hierarchy matching Figma specifications with Google Fonts.
+**Role in the architecture:** Design token layer (`core/theme`); defines typography hierarchy matching Figma specifications with Avenir Next.
 **How it works (step by step):**
-1. Configures `GoogleFonts.nunitoSans` as the geometric humanist font family.
+1. Configures `Avenir Next` as the primary font family (`fontFamily: 'Avenir Next'`) with fallback to `['Nunito Sans', 'sans-serif']`.
 2. Uses an internal helper `_base` to convert Figma line-heights to Flutter's proportional `height` factor (`lineHeight / fontSize`).
 3. Declares semantic styles (`screenTitle`, `priceLarge`, `titleLarge`, `cardTitle`, `body`, `caption`, `stat`, `link`).
 **Key Dart/Flutter concepts used:**
+- `fontFamily` & `fontFamilyFallback`: Directs Flutter to render Avenir Next on systems where it is natively installed (iOS/macOS), falling back gracefully on Android without missing glyphs.
 - `TextStyle.height`: In Flutter, `height` is a multiplier of `fontSize` rather than absolute pixels (e.g., 24px line height on 16px font is `24 / 16 = 1.5`).
-- `GoogleFonts`: Package that provides runtime caching and asset bundling for standard typography.
-**Kotlin/Android analogy:** Equivalent to `Typography` in Jetpack Compose Material 3 theme.
-**Why this way (and the alternative):** Directly creating `TextStyle` with system fonts risks cross-platform font rendering discrepancies; using defined styles keeps typography consistent across iOS and Android.
-**Likely interview question:** "How does line height work in Flutter `TextStyle`?" → "`TextStyle.height` is a multiplier of the font size (not pixels); to match a Figma line height of 24px with a 16px font, set `height: 24 / 16 = 1.5`."
+**Kotlin/Android analogy:** Equivalent to `Typography` in Jetpack Compose Material 3 theme with system font fallback chains.
+**Why this way (and the alternative):** Avenir Next is the exact Figma typography; setting it with fallback gives native 1:1 fidelity on Apple platforms while ensuring cross-platform safety on Android.
+**Likely interview question:** "How do you handle proprietary fonts like Avenir Next in cross-platform Flutter?" → "By setting `fontFamily: 'Avenir Next'` with a robust `fontFamilyFallback` list (or bundling the licensed TTF in assets), allowing native resolution on platforms where it's pre-installed while falling back gracefully on others."
 
 ---
 
@@ -54,9 +54,10 @@ Study notes for explaining every file in the codebase during a technical intervi
 **Role in the architecture:** Core theme assembly (`core/theme`); generates Flutter's `ThemeData` to configure global Material 3 styling.
 **How it works (step by step):**
 1. Constructs a light `ThemeData` specifying `useMaterial3: true`.
-2. Connects `AppColors` to `ColorScheme.light` and binds `GoogleFonts.nunitoSansTextTheme`.
-3. Overrides default `AppBarTheme` to provide flat, white, centered navigation headers with 0 elevation and dark status-bar icons.
-4. Overrides `DividerThemeData` with subtle 1px dividers matching Figma.
+2. Configures default `fontFamily: AppTextStyles.fontFamily` and `fontFamilyFallback: AppTextStyles.fontFallback`.
+3. Connects `AppColors` to `ColorScheme.light`.
+4. Overrides default `AppBarTheme` to provide flat, white, centered navigation headers with 0 elevation and dark status-bar icons.
+5. Overrides `DividerThemeData` with subtle 1px dividers matching Figma.
 **Key Dart/Flutter concepts used:**
 - `ThemeData`: Root configuration object that controls color scheme, typography, and component styling throughout the widget tree.
 - `SystemUiOverlayStyle`: Controls status bar and navigation bar icon brightness (dark vs light).

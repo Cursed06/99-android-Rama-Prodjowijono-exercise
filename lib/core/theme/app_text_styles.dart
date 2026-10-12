@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'app_colors.dart';
 
-/// Typography tokens based on Nunito Sans font styling.
+/// Typography tokens based on Avenir Next font styling.
 ///
-/// Provides consistent text styling, font weight, line height, and color tokens.
+/// Follows the 99.co design system specifications. Uses Avenir Next
+/// as the primary typeface (available natively on iOS/macOS) with
+/// fallbacks for environments where Avenir Next is not pre-installed.
 abstract final class AppTextStyles {
-  /// Base text style builder with Nunito Sans font family.
+  /// Primary font family from Figma design specs.
+  static const String fontFamily = 'Avenir Next';
+
+  /// Fallback font families if Avenir Next is not pre-installed (e.g. default Android).
+  static const List<String> fontFallback = ['Nunito Sans', 'sans-serif'];
+
+  /// Base text style builder with Avenir Next font family and proportional line height.
   static TextStyle _base({
     required double fontSize,
     required FontWeight fontWeight,
     required double lineHeight,
     required Color color,
   }) {
-    return GoogleFonts.nunitoSans(
+    return TextStyle(
+      fontFamily: fontFamily,
+      fontFamilyFallback: fontFallback,
       fontSize: fontSize,
       fontWeight: fontWeight,
       height: lineHeight / fontSize,

@@ -21,7 +21,7 @@
 | `error` | `#D32F2F` | Error messages |
 
 ### Typography
-Font: a clean geometric humanist sans — the designs look like **Nunito Sans / Mulish**. Use `google_fonts` → `GoogleFonts.nunitoSans()` (or bundle the font). Fall back to system sans.
+Font: **Avenir Next** (primary design spec). Uses `'Avenir Next'` (native on iOS/macOS) with fallback to `['Nunito Sans', 'sans-serif']` on platforms where Avenir Next is not pre-installed.
 
 | Token | Size / Weight / Line height | Used for |
 |---|---|---|

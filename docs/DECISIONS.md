@@ -20,7 +20,7 @@ Record of technical trade-offs, architecture selections, and intentional design 
 - **Decision:** Display the live endpoint values faithfully as described in `PRD.md §3.3`.
 - **Rationale:** Production mobile applications must dynamically render server-provided contracts.
 
-## 4. Typography: Google Fonts Nunito Sans
-- **Context:** Figma designs use a clean geometric humanist sans typography (Nunito Sans / Mulish).
-- **Decision:** Utilize `google_fonts` (`GoogleFonts.nunitoSans`) across `AppTextStyles` and `AppTheme`.
-- **Rationale:** Consistent typography rendering across iOS, Android, and macOS without needing to manually bundle multi-weight TTF assets.
+## 4. Typography: Avenir Next with Cross-Platform Fallback
+- **Context:** The Figma design specifically specifies **Avenir Next** as the design typography.
+- **Decision:** Configure `AppTextStyles` and `AppTheme` to use `Avenir Next` as the primary font family (`fontFamily: 'Avenir Next'`) with `fontFamilyFallback: ['Nunito Sans', 'sans-serif']`.
+- **Rationale:** Avenir Next is pre-installed natively on iOS and macOS, giving authentic 1:1 rendering on Apple devices. On Android and web environments where proprietary Avenir Next is not pre-installed, Flutter smoothly cascades to the clean geometric sans fallbacks without crashing or breaking layout dimensions.
