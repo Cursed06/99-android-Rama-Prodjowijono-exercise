@@ -65,8 +65,8 @@ abstract final class AppTextStyles {
   /// Project name heading inside search result cards (16px/700).
   static final TextStyle cardTitle = _base(
     fontSize: 16,
-    fontWeight: FontWeight.w700,
-    lineHeight: 22,
+    fontWeight: FontWeight.w600,
+    lineHeight: 24,
     color: AppColors.primary,
   );
 
@@ -74,7 +74,7 @@ abstract final class AppTextStyles {
   static final TextStyle cardPrice = _base(
     fontSize: 16,
     fontWeight: FontWeight.w700,
-    lineHeight: 22,
+    lineHeight: 16,
     color: AppColors.primary,
   );
 
@@ -97,8 +97,8 @@ abstract final class AppTextStyles {
   /// Subtle caption for address and tenure metadata (12px/400).
   static final TextStyle caption = _base(
     fontSize: 12,
-    fontWeight: FontWeight.w400,
-    lineHeight: 18,
+    fontWeight: FontWeight.w500,
+    lineHeight: 12,
     color: AppColors.textSecondary,
   );
 
@@ -106,7 +106,7 @@ abstract final class AppTextStyles {
   static final TextStyle stat = _base(
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    lineHeight: 20,
+    lineHeight: 14,
     color: AppColors.textBody,
   );
 

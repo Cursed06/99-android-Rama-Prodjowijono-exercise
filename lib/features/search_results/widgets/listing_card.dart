@@ -32,8 +32,8 @@ class ListingCard extends StatelessWidget {
         boxShadow: const [
           BoxShadow(
             color: AppColors.shadow,
-            blurRadius: 12,
-            offset: Offset(0, 2),
+            blurRadius: 16,
+            offset: Offset(0, 4),
           ),
         ],
       ),
@@ -68,7 +68,7 @@ class ListingCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: AppSpacing.xs),
+                const SizedBox(height: AppSpacing.xxs),
                 Text(
                   Formatters.formatMeta(
                     listing.category,
@@ -79,7 +79,7 @@ class ListingCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: AppSpacing.sm),
+                const SizedBox(height: AppSpacing.md),
                 Text(
                   Formatters.formatStats(
                     listing.attributes.bedrooms,
@@ -90,7 +90,7 @@ class ListingCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: AppSpacing.sm),
+                const SizedBox(height: AppSpacing.md),
                 Text(
                   Formatters.formatCardPrice(listing.attributes.price),
                   style: AppTextStyles.cardPrice,
@@ -122,32 +122,55 @@ class _CardPhoto extends StatelessWidget {
         borderRadius: BorderRadius.circular(AppSpacing.radiusImage),
         child: Hero(
           tag: 'listing-photo-$listingId',
-          child: CachedNetworkImage(
-            imageUrl: photoUrl,
-            fit: BoxFit.cover,
-            placeholder: (context, url) => Container(
-              color: AppColors.background,
-              child: const Center(
-                child: SizedBox(
-                  width: 24,
-                  height: 24,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2,
-                    valueColor: AlwaysStoppedAnimation<Color>(AppColors.accent),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CachedNetworkImage(
+                imageUrl: photoUrl,
+                fit: BoxFit.cover,
+                placeholder: (context, url) => Container(
+                  color: AppColors.background,
+                  child: const Center(
+                    child: SizedBox(
+                      width: 24,
+                      height: 24,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(AppColors.accent),
+                      ),
+                    ),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Container(
+                  color: AppColors.background,
+                  child: const Center(
+                    child: Icon(
+                      Icons.broken_image_outlined,
+                      color: AppColors.textSecondary,
+                      size: 32,
+                    ),
                   ),
                 ),
               ),
-            ),
-            errorWidget: (context, url, error) => Container(
-              color: AppColors.background,
-              child: const Center(
-                child: Icon(
-                  Icons.broken_image_outlined,
-                  color: AppColors.textSecondary,
-                  size: 32,
+              const Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                height: 60,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        AppColors.photoOverlay,
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         ),
       ),
