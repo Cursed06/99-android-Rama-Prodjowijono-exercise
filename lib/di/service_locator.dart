@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import '../data/repositories/listing_repository.dart';
 import '../data/repositories/listing_repository_impl.dart';
 import '../data/services/listing_api_service.dart';
+import '../features/listing_detail/listing_detail_view_model.dart';
 import '../features/search_results/search_results_view_model.dart';
 
 /// Global service locator instance.
@@ -25,5 +26,9 @@ void setupLocator() {
   // ViewModels
   getIt.registerFactory<SearchResultsViewModel>(
     () => SearchResultsViewModel(getIt()),
+  );
+
+  getIt.registerFactoryParam<ListingDetailViewModel, int, void>(
+    (id, _) => ListingDetailViewModel(getIt(), id),
   );
 }

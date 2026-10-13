@@ -259,3 +259,100 @@ Study notes for explaining every file in the codebase during a technical intervi
 **Kotlin/Android analogy:** Composable Screen function observing `val uiState by viewModel.uiState.collectAsState()`.
 **Why this way (and the alternative):** Using `ListView.separated` lazily creates only visible cards in memory, providing high performance even if hundreds of listings exist.
 **Likely interview question:** "How do you ensure responsive tablet layout in Flutter?" → "By constraining the body with `ConstrainedBox(maxWidth: 600)` and wrapping it in `Center()`, preventing listing cards from stretching excessively on wide screens."
+
+---
+
+## Milestone 4: Listing Detail Screen (ViewModel + UI)
+
+### 📘 Walkthrough: `lib/features/listing_detail/listing_detail_view_model.dart`
+**Role in the architecture:** ViewModel layer (`features/listing_detail`); coordinates data fetching for a single listing and manages UI interaction states.
+**How it works (step by step):**
+1. Holds immutable `listingId` and receives `ListingRepository` via constructor injection.
+2. `load()` sets `UiState` to `Loading()`, requests full detail data from `_repository.getListingDetail(listingId)`, and emits `Success(detail)` or `Failure(e.message)`.
+3. Manages `_isDescriptionExpanded` boolean and exposes `toggleDescription()` which calls `notifyListeners()`.
+**Key Dart/Flutter concepts used:**
+- Parameterized ViewModel: Instantiated with a runtime parameter (`listingId`) through `GetIt.registerFactoryParam`.
+- `notifyListeners()`: Broadcasts updates when either data or local screen interaction state (description expanded) changes.
+**Kotlin/Android analogy:** Android `SavedStateHandle` / parameterized `ViewModel` managing screen state and expansion toggles.
+**Why this way (and the alternative):** Storing `isDescriptionExpanded` in the ViewModel rather than widget `setState` keeps business state unified and preserves state even if parent layouts re-render.
+**Likely interview question:** "Why should UI toggles like `isDescriptionExpanded` be in the ViewModel instead of `setState`?" → "Keeping visual interaction state in the ViewModel keeps the View purely stateless and observable, and allows unit tests to assert expansion toggles without needing to render Flutter widgets."
+
+---
+
+### 📘 Walkthrough: `lib/features/listing_detail/widgets/detail_hero.dart`
+**Role in the architecture:** Presentation widget (`features/listing_detail/widgets`); renders the full-bleed hero photograph and custom back navigation.
+**How it works (step by step):**
+1. Sets a fixed height of 280px (`AppSpacing.detailHeroHeight`) using `Stack` and `CachedNetworkImage`.
+2. Wraps the image in a `Hero` with tag `listing-photo-$listingId`, connecting the transition smoothly from the Search Results card.
+3. Overlays a dark vertical gradient scrim (`AppColors.overlayScrim` to transparent) to ensure the white back button is always readable regardless of image brightness.
+4. Uses `SafeArea(bottom: false)` to position the 44x44 tap target below the device notch / status bar.
+**Key Dart/Flutter concepts used:**
+- `Stack` and `Positioned`: Layers image, gradient scrim, and navigation overlay.
+- `Hero`: Cross-screen flight animation for shared visual elements.
+**Kotlin/Android analogy:** `@Composable Box` with `AsyncImage`, gradient brush overlay, and `IconButton`.
+**Why this way (and the alternative):** A standard AppBar obscures full-bleed hero imagery; an overlaid custom back button over a gradient scrim provides modern immersion while maintaining contrast accessibility.
+**Likely interview question:** "How do you guarantee contrast for navigation icons placed on top of user-uploaded images?" → "By placing a subtle gradient scrim (`LinearGradient` from semi-transparent black to transparent) directly beneath the navigation icons, guaranteeing high contrast even against pure white photos."
+
+---
+
+### 📘 Walkthrough: `lib/features/listing_detail/widgets/price_header.dart`
+**Role in the architecture:** Presentation widget (`features/listing_detail/widgets`); renders the prominent price, titles, map action, and attribute indicators.
+**How it works (step by step):**
+1. Displays large price formatted via `Formatters.formatDetailPrice(price)`.
+2. Displays project name and address title/subtitle using `AppTextStyles`.
+3. Renders the interactive "View on map" link with an accent pin icon and ink ripple.
+4. Uses `Wrap` for bed, bath, and sqft badges to prevent overflow when system font scaling is increased (up to 1.3x).
+**Key Dart/Flutter concepts used:**
+- `Wrap`: Automatically wraps inline items into subsequent lines if horizontal space is constrained or text is enlarged.
+- `InkWell`: Delivers touch feedback for actionable links.
+**Kotlin/Android analogy:** Column containing Text views, FlowRow for stat chips, and clickable map link.
+**Why this way (and the alternative):** Hardcoding fixed-width `Row`s causes yellow-and-black pixel overflow errors on smaller devices or large accessibility font scales; `Wrap` guarantees layout resilience.
+**Likely interview question:** "How do you prevent overflow errors when supporting dynamic accessibility font scaling in Flutter?" → "By utilizing `Wrap` with `spacing` and `runSpacing` or `Flexible` wrappers instead of rigid `Row` layouts, allowing chips and stats to break into multiple lines gracefully."
+
+---
+
+### 📘 Walkthrough: `lib/features/listing_detail/widgets/property_details_section.dart`
+**Role in the architecture:** Presentation widget (`features/listing_detail/widgets`); renders dynamic 2-column specification rows.
+**How it works (step by step):**
+1. Renders the "Property details" section heading.
+2. Iterates dynamically over `items` (`property_details[]`), generating a row for each entry.
+3. Splits each row into a 40% label column (`flex: 4`, `AppTextStyles.bodyStrong`) and a 60% value column (`flex: 6`, `AppTextStyles.body`).
+4. Handles empty lists gracefully with `SizedBox.shrink()`.
+**Key Dart/Flutter concepts used:**
+- Dynamic list mapping: `items.map((item) => _PropertyRow(item: item))`.
+- Flexible column division via `Expanded` with proportional `flex` values.
+**Kotlin/Android analogy:** Dynamic `@Composable` Column iterating over `propertyDetails` with weighted rows (`Modifier.weight()`).
+**Why this way (and the alternative):** The API contract controls which rows exist (e.g. facing, tenure, built year); hardcoding rows would fail when new fields appear or change.
+**Likely interview question:** "Why should property detail rows be rendered dynamically rather than hardcoded in the UI?" → "Real estate backends frequently vary specification fields by property type (e.g., HDB vs. Condo); rendering dynamically from the API array makes the client resilient to schema changes."
+
+---
+
+### 📘 Walkthrough: `lib/features/listing_detail/widgets/expandable_description.dart`
+**Role in the architecture:** Presentation widget (`features/listing_detail/widgets`); renders property description with expandable clamp toggle.
+**How it works (step by step):**
+1. Renders the "Description" section title.
+2. Clamps the text to 5 lines with `TextOverflow.ellipsis` when `isExpanded == false`, or displays all lines (`maxLines: null`) when true.
+3. Renders a "Read more" / "Show less" interactive toggle button that triggers the ViewModel's `toggleDescription` action.
+**Key Dart/Flutter concepts used:**
+- Conditional text layout: `maxLines: isExpanded ? null : 5`.
+- Callback delegation: passes `onToggle` up to the ViewModel.
+**Kotlin/Android analogy:** Expandable text Composable with `maxLines` and animated toggle button.
+**Why this way (and the alternative):** Descriptions can be thousands of characters; clamping to 5 lines preserves clean visual hierarchy while allowing users to read the full text on demand.
+**Likely interview question:** "How do you implement text clamping and expansion in Flutter?" → "By binding the `Text` widget's `maxLines` to a boolean state (`isExpanded ? null : 5`) and providing an interactive text button that toggles that state."
+
+---
+
+### 📘 Walkthrough: `lib/features/listing_detail/listing_detail_page.dart`
+**Role in the architecture:** Screen layer (`features/listing_detail`); main view for property details and map integration.
+**How it works (step by step):**
+1. Scopes `ListingDetailViewModel` using `ChangeNotifierProvider` and supports an optional injected ViewModel for headless widget testing.
+2. Switches over `viewModel.state` to present `LoadingView`, `ErrorView`, or `_DetailContent`.
+3. In `_DetailContent`, builds Google Maps URL (`https://www.google.com/maps/search/?api=1&query=$lat,$lng`) and invokes `launchUrl(uri, mode: LaunchMode.externalApplication)`.
+4. Checks `if (context.mounted)` after `await launchUrl` before displaying a floating SnackBar on error.
+5. Assembles all sections in a `SingleChildScrollView` constrained to `AppSpacing.maxContentWidth` on tablets.
+**Key Dart/Flutter concepts used:**
+- `url_launcher`: Plugin to hand off deep links and external URLs to system apps.
+- `context.mounted`: Essential check after asynchronous gaps to avoid accessing an unmounted `BuildContext`.
+**Kotlin/Android analogy:** Detail Activity / Screen with `Intent(Intent.ACTION_VIEW, Uri.parse(...))`.
+**Why this way (and the alternative):** Opening device maps externally avoids costly Google Maps SDK setup and API keys while providing a full native maps experience with turn-by-turn navigation.
+**Likely interview question:** "Why is `context.mounted` mandatory after an `await` in Flutter?" → "Because an asynchronous operation may complete after the user has navigated away and the widget was disposed; checking `context.mounted` prevents runtime `Unhandled Exception: Looking up a deactivated widget's Ancestor` crashes."

@@ -40,6 +40,12 @@ Comprehensive technical questions, architectural reasoning, and trade-offs to ac
 ### Q7: Why use `ListView.separated` and tablet width constraints in the list view?
 **Answer:** `ListView.separated` provides viewport virtualization, lazily building only the cards currently visible on screen to conserve memory and maintain 60/120 FPS scrolling. Constraining the list body with `ConstrainedBox(maxWidth: AppSpacing.maxContentWidth)` and centering it ensures that on large screens or tablets, listing cards do not stretch into unreadable wide banners.
 
+### Q8: How does the `Hero` animation work between the search card and detail page?
+**Answer:** In Flutter, wrapping both the source image in `ListingCard` and the destination image in `DetailHero` with a `Hero(tag: 'listing-photo-$listingId')` prompts the navigator overlay to animate the image's bounds and position smoothly from the list card to the full-width header during push and pop transitions.
+
+### Q9: Why is checking `context.mounted` critical after external URL launches?
+**Answer:** When launching external applications (such as device maps via `url_launcher`), the asynchronous call may take seconds or fail while the user presses the back button or leaves the page. If the widget is unmounted when execution resumes, calling `ScaffoldMessenger.of(context)` would attempt to look up an ancestor in a deactivated widget tree, throwing an unhandled exception. Checking `if (context.mounted)` safeguards against this.
+
 ---
 
 ## 3. Known Quirks & Data Contracts (PRD §3.3)
