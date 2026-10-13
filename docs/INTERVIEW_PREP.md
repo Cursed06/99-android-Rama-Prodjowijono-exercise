@@ -62,3 +62,44 @@ If continuing this project in a production engineering team, the next priorities
 3. **Enhanced Navigation:** Implement declarative routing using `go_router` for deep linking (e.g., opening a listing directly via URL `myapp://listings/12`).
 4. **Accessibility (a11y) & Localization (i18n):** Add semantic labels (`Semantics`), test with Screen Readers (TalkBack/VoiceOver), and extract hardcoded strings into `l10n` ARB files.
 5. **Interactive In-App Maps:** Embed Google Maps or Mapbox inside the detail screen with custom pins for nearby MRT stations and schools.
+
+---
+
+## 5. 5-Minute Technical Interview Walkthrough Script
+
+Use this structured script to present the project with confidence in a live interview:
+
+### Minute 1: The Architecture & Philosophy
+> "Hi! I built the 99.co mobile exercise using Flutter and Dart 3, structuring it in a strict **MVVM (Model-View-ViewModel)** layered architecture.
+> 
+> My primary goal was clean separation of concerns and testability:
+> - **The Views** (`SearchResultsPage` and `ListingDetailPage`) are purely passive and reactive. They contain zero networking code and zero JSON parsing.
+> - **The ViewModels** manage visual state using a sealed `UiState<T>` hierarchy (`Loading`, `Success`, `Failure`) and notify the UI using Flutter's native `ChangeNotifier`.
+> - **The Repository layer** acts as the single source of truth abstraction, decoupling business logic from the network source.
+> - **Dependency Injection** is set up using `get_it` at the application root, but ViewModels receive their dependencies strictly through constructors, making them 100% testable in pure Dart without mocks of the service locator."
+
+### Minutes 2–3: Following a User Tap (End-to-End Execution Trace)
+> "Let's trace what happens from launch to tapping a card:
+> 
+> 1. When `NinetyNineApp` boots, `main()` initializes `setupLocator()` and launches `SearchResultsPage`.
+> 2. `SearchResultsPage` creates `SearchResultsViewModel` via `ChangeNotifierProvider` and triggers `.load()`. The ViewModel enters `Loading()`, which prompts the UI to render `LoadingView()`.
+> 3. Asynchronously, `ListingRepositoryImpl` invokes `ListingApiService.fetchListings()`, which issues an HTTP GET with a 10-second timeout.
+> 4. Responses are deserialized defensively via `Listing.fromJson` — handling int-vs-double variations with `(x as num).toInt()` and catching malformed payloads into typed `ParseException`s.
+> 5. On success, `SearchResultsViewModel` emits `Success(listings)`. The page builds a virtualized `ListView.separated`, constrained to 600px max width on tablets.
+> 6. When the user taps a `ListingCard`, `Navigator.push` mounts `ListingDetailPage(listingId: id)`. A `Hero` widget smoothly animates the property photograph across the screen transition.
+> 7. The detail page queries `GET /details/{id}.json`. If Firebase returns HTTP 200 with string `null` (a documented quirk for missing nodes), the service maps it to a `NotFoundException`, displaying an informative error state with a Retry action."
+
+### Minute 4: UI Polish & Edge Case Resilience
+> "On the UI side:
+> - Typography follows the Figma spec using **Avenir Next** with a robust fallback chain (`Nunito Sans`, `sans-serif`) to ensure native fidelity on iOS and graceful rendering on Android.
+> - Overlaid navigation on the detail hero uses a dark gradient scrim (`AppColors.overlayScrim`), ensuring the white back chevron remains legible over bright photographs.
+> - Specification rows under 'Property details' are dynamically built from `property_details[]`, so backend changes won't break client layouts.
+> - The description is clamped to 5 lines with an interactive 'Read more / Show less' toggle.
+> - Tapping 'View on map' launches the device maps application at the exact latitude and longitude using `url_launcher`. Notice that after the asynchronous `await launchUrl`, we explicitly check `if (context.mounted)` before triggering a floating SnackBar, eliminating deactivated ancestor exceptions."
+
+### Minute 5: Trade-offs & What I Would Do Next
+> "To keep the codebase maintainable and focused for an interview:
+> - I selected `provider` + `ChangeNotifier` over Bloc or Riverpod because it provides idiomatic MVVM for a two-screen application with zero code generation. In a multi-module enterprise app, I would consider Riverpod or Bloc for scoped caching.
+> - I wrote defensive `fromJson` factories by hand rather than using `json_serializable`, allowing me to explain every line of parsing logic.
+> - I authored **47 unit and widget tests** covering models, HTTP client mocking with `mocktail`, repository delegation, ViewModel state transitions, formatters, and full navigation flows.
+> - If taking this to production, my next steps would be local SQLite caching for offline browsing, infinite scroll pagination, and deep linking via `go_router`."

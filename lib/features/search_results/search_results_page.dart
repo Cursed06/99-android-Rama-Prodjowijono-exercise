@@ -9,6 +9,7 @@ import '../../core/widgets/error_view.dart';
 import '../../core/widgets/loading_view.dart';
 import '../../data/models/listing.dart';
 import '../../di/service_locator.dart';
+import '../listing_detail/listing_detail_page.dart';
 import 'search_results_view_model.dart';
 import 'widgets/listing_card.dart';
 
@@ -46,6 +47,18 @@ class _SearchResultsView extends StatelessWidget {
 
   const _SearchResultsView({this.onListingSelected});
 
+  void _onListingTap(BuildContext context, int listingId) {
+    if (onListingSelected != null) {
+      onListingSelected!(listingId);
+    } else {
+      Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => ListingDetailPage(listingId: listingId),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<SearchResultsViewModel>();
@@ -74,7 +87,7 @@ class _SearchResultsView extends StatelessWidget {
                 : _ListingList(
                     listings: data,
                     onRefresh: viewModel.refresh,
-                    onListingSelected: onListingSelected,
+                    onListingSelected: (id) => _onListingTap(context, id),
                   ),
           },
         ),
