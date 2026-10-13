@@ -153,3 +153,19 @@ If expanding this application for a full commercial launch:
 3. **Declarative Deep Linking (`go_router`):** Support URL deep linking (e.g. `myapp://listings/12`) and browser history for Flutter Web.
 4. **Accessibility (a11y) & Localization (i18n):** Add semantic labels (`Semantics`), verify screen reader navigability (TalkBack / VoiceOver), and extract strings into `.arb` files with `flutter_localizations`.
 5. **Interactive In-App Maps:** Embed native Google Maps with custom markers for surrounding transport and amenities.
+
+---
+
+## 📚 Project Documentation
+
+All detailed project specifications, architectural guides, and study notes are organized inside the `docs/` folder:
+
+| Document | Description |
+|---|---|
+| [docs/PRD.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/PRD.md) | Product Requirements Document, endpoints, data contract quirks, and checklist |
+| [docs/Architecture.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/Architecture.md) | Layered architecture, MVVM implementation, state management, and testing strategy |
+| [docs/Design_System.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/Design_System.md) | Color palette, typography scale (Avenir Next), 4pt grid spacing, and component specs |
+| [docs/CODE_EXPLAINED.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/CODE_EXPLAINED.md) | Step-by-step technical walkthroughs for every file in the codebase |
+| [docs/INTERVIEW_PREP.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/INTERVIEW_PREP.md) | Architecture Q&A list and 5-minute technical interview presentation script |
+| [docs/DECISIONS.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/DECISIONS.md) | Log of architectural trade-offs, package choices, and font selections |
+| [docs/Agents.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/Agents.md) | Coding standards, teach-as-you-go methodology, and milestone definitions |
