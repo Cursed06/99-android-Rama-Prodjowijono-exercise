@@ -58,5 +58,12 @@ void main() {
         '1 Bed · 1 Bath · 550 sqft',
       );
     });
+
+    test('formatPricePerSqft formats rental and sale PSF properly', () {
+      expect(Formatters.formatPricePerSqft(2561, 2561), '\$1.00 psf');
+      expect(Formatters.formatPricePerSqft(6500, 1800), '\$3.61 psf');
+      expect(Formatters.formatPricePerSqft(1420000, 1000), '\$1,420 psf');
+      expect(Formatters.formatPricePerSqft(2500, 0), 'Unavailable');
+    });
   });
 }

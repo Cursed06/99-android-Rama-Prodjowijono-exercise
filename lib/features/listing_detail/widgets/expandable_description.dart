@@ -30,11 +30,12 @@ class ExpandableDescription extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        const SizedBox(height: AppSpacing.lg),
         Text(
           'Description',
           style: AppTextStyles.sectionHeading,
         ),
-        const SizedBox(height: AppSpacing.sm),
+        const SizedBox(height: AppSpacing.lg),
         Text(
           description,
           style: AppTextStyles.body,

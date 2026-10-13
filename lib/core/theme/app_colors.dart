@@ -35,6 +35,9 @@ abstract final class AppColors {
   /// Black overlay with 40% opacity for bottom photo gradients.
   static const Color photoOverlay = Color(0x66000000);
 
+  /// Black overlay with 50% opacity for hero photo top & bottom gradients.
+  static const Color heroOverlay = Color(0x80000000);
+
   /// Error color for failed network calls and retry prompts.
   static const Color error = Color(0xFFD32F2F);
 }

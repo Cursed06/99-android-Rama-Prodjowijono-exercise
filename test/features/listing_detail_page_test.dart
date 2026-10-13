@@ -128,7 +128,7 @@ void main() {
       expect(find.text('Property details'), findsOneWidget);
       expect(find.text('Tenure'), findsOneWidget);
       expect(find.text('99-year leasehold'), findsOneWidget);
-      expect(find.text('Built year'), findsOneWidget);
+      expect(find.text('Built year (TOP)'), findsOneWidget);
       expect(find.text('2015'), findsOneWidget);
 
       // Expandable Description

@@ -139,7 +139,7 @@ class _DetailContent extends StatelessWidget {
                       padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
                       child: Divider(color: AppColors.divider),
                     ),
-                    PropertyDetailsSection(items: detail.propertyDetails),
+                    PropertyDetailsSection(detail: detail),
                     const Padding(
                       padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
                       child: Divider(color: AppColors.divider),

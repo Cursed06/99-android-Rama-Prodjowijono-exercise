@@ -30,47 +30,47 @@ abstract final class AppTextStyles {
     );
   }
 
-  /// App bar centered screen title ("Search Results", 16px/600).
+  /// App bar centered screen title ("Search Results", 16px/600, line height 16).
   static final TextStyle screenTitle = _base(
     fontSize: 16,
     fontWeight: FontWeight.w600,
-    lineHeight: 24,
+    lineHeight: 16,
     color: AppColors.primary,
   );
 
-  /// Prominent price on the detail screen ($2,561, 26px/700).
+  /// Prominent price on the detail screen ($2,561, 23px/700, line height 23).
   static final TextStyle priceLarge = _base(
-    fontSize: 26,
+    fontSize: 23,
     fontWeight: FontWeight.w700,
-    lineHeight: 32,
+    lineHeight: 23,
     color: AppColors.primary,
   );
 
-  /// Detail page project name title (18px/600).
+  /// Detail page project name title (19px/600, line height 19).
   static final TextStyle titleLarge = _base(
-    fontSize: 18,
+    fontSize: 19,
     fontWeight: FontWeight.w600,
-    lineHeight: 24,
+    lineHeight: 19,
     color: AppColors.primary,
   );
 
-  /// Section heading for "Property details" and "Description" (17px/600).
+  /// Section heading for "Property details" and "Description" (19px/600, line height 19).
   static final TextStyle sectionHeading = _base(
-    fontSize: 17,
+    fontSize: 19,
     fontWeight: FontWeight.w600,
-    lineHeight: 24,
+    lineHeight: 19,
     color: AppColors.primary,
   );
 
-  /// Project name heading inside search result cards (16px/700).
+  /// Project name heading inside search result cards (16px/600, line height 16).
   static final TextStyle cardTitle = _base(
     fontSize: 16,
     fontWeight: FontWeight.w600,
-    lineHeight: 24,
+    lineHeight: 16,
     color: AppColors.primary,
   );
 
-  /// Price tag inside search result cards ($2,561/mo, 16px/700).
+  /// Price tag inside search result cards ($2,561/mo, 16px/700, line height 16).
   static final TextStyle cardPrice = _base(
     fontSize: 16,
     fontWeight: FontWeight.w700,
@@ -78,11 +78,11 @@ abstract final class AppTextStyles {
     color: AppColors.primary,
   );
 
-  /// Body paragraph style for descriptions (14px/400).
+  /// Body paragraph style for descriptions (16px/400, line height 28).
   static final TextStyle body = _base(
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: FontWeight.w400,
-    lineHeight: 24,
+    lineHeight: 28,
     color: AppColors.textBody,
   );
 
@@ -94,7 +94,31 @@ abstract final class AppTextStyles {
     color: AppColors.primary,
   );
 
-  /// Subtle caption for address and tenure metadata (12px/400).
+  /// Label for property details specification rows (16px/500, line height 16).
+  static final TextStyle propertyDetailLabel = _base(
+    fontSize: 16,
+    fontWeight: FontWeight.w500,
+    lineHeight: 16,
+    color: AppColors.primary,
+  );
+
+  /// Value for property details specification rows (16px/400, line height 16).
+  static final TextStyle propertyDetailValue = _base(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    lineHeight: 16,
+    color: AppColors.primary,
+  );
+
+  /// Detail page address title and subtitle lines (14px/400, line height 14).
+  static final TextStyle detailAddress = _base(
+    fontSize: 14,
+    fontWeight: FontWeight.w400,
+    lineHeight: 14,
+    color: AppColors.textSecondary,
+  );
+
+  /// Subtle caption for card address and tenure metadata (12px/500, line height 12).
   static final TextStyle caption = _base(
     fontSize: 12,
     fontWeight: FontWeight.w500,
@@ -102,7 +126,7 @@ abstract final class AppTextStyles {
     color: AppColors.textSecondary,
   );
 
-  /// Stats text for beds, baths, and square footage (14px/400).
+  /// Card stats text for beds, baths, and square footage (14px/400, line height 14).
   static final TextStyle stat = _base(
     fontSize: 14,
     fontWeight: FontWeight.w400,
@@ -110,11 +134,19 @@ abstract final class AppTextStyles {
     color: AppColors.textBody,
   );
 
-  /// Interactive link text ("View on map", 14px/600).
+  /// Detail page quick stats for beds, baths, and square footage (16px/400, line height 16).
+  static final TextStyle detailStat = _base(
+    fontSize: 16,
+    fontWeight: FontWeight.w400,
+    lineHeight: 16,
+    color: AppColors.textBody,
+  );
+
+  /// Interactive link text ("View on map", "Read more", 14px/600, line height 14).
   static final TextStyle link = _base(
     fontSize: 14,
     fontWeight: FontWeight.w600,
-    lineHeight: 20,
+    lineHeight: 14,
     color: AppColors.accent,
   );
 }

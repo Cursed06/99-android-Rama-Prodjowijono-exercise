@@ -60,7 +60,7 @@ class DetailHero extends StatelessWidget {
               ),
             ),
           ),
-          Positioned(
+          const Positioned(
             top: 0,
             left: 0,
             right: 0,
@@ -71,7 +71,25 @@ class DetailHero extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [
-                    AppColors.overlayScrim,
+                    AppColors.heroOverlay,
+                    Colors.transparent,
+                  ],
+                ),
+              ),
+            ),
+          ),
+          const Positioned(
+            bottom: 0,
+            left: 0,
+            right: 0,
+            height: 90,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                  colors: [
+                    AppColors.heroOverlay,
                     Colors.transparent,
                   ],
                 ),

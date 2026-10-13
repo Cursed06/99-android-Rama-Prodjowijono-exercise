@@ -93,7 +93,7 @@ void main() {
     // Verify we navigated to Detail page
     expect(find.text('2 Keppel Way · Condo for Rent'), findsOneWidget);
     expect(find.text('Luxury bayfront living.'), findsOneWidget);
-    expect(find.text('\$3,611 psf'), findsOneWidget);
+    expect(find.text('\$3.61 psf'), findsOneWidget);
 
     // Tap back button
     await tester.tap(find.byTooltip('Back'));

@@ -29,20 +29,20 @@ class PriceHeader extends StatelessWidget {
           Formatters.formatDetailPrice(detail.attributes.price),
           style: AppTextStyles.priceLarge,
         ),
-        const SizedBox(height: AppSpacing.xs),
+        const SizedBox(height: AppSpacing.lg),
         Text(
           detail.projectName,
           style: AppTextStyles.titleLarge,
         ),
-        const SizedBox(height: AppSpacing.xs),
+        const SizedBox(height: AppSpacing.sm),
         Text(
           detail.address.title,
-          style: AppTextStyles.caption,
+          style: AppTextStyles.detailAddress,
         ),
         const SizedBox(height: AppSpacing.xs),
         Text(
           detail.address.subtitle,
-          style: AppTextStyles.caption,
+          style: AppTextStyles.detailAddress,
         ),
         const SizedBox(height: AppSpacing.sm),
         InkWell(
@@ -119,13 +119,13 @@ class _StatItem extends StatelessWidget {
       children: [
         Icon(
           icon,
-          size: 18,
+          size: 16,
           color: AppColors.textSecondary,
         ),
         const SizedBox(width: AppSpacing.xs),
         Text(
           label,
-          style: AppTextStyles.stat,
+          style: AppTextStyles.detailStat,
         ),
       ],
     );

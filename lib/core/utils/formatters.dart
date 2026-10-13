@@ -41,4 +41,14 @@ abstract final class Formatters {
   /// Formats card stats row (e.g. "3 Beds · 2 Baths · 2,561 sqft").
   static String formatStats(int bedrooms, int bathrooms, int areaSize) =>
       '${formatBedrooms(bedrooms)} · ${formatBathrooms(bathrooms)} · ${formatArea(areaSize)}';
+
+  /// Formats price per square foot (e.g. 2561, 2561 -> "$1.00 psf"; 1420000, 1000 -> "$1,420 psf").
+  static String formatPricePerSqft(int price, int areaSize) {
+    if (areaSize <= 0) return 'Unavailable';
+    final psf = price / areaSize;
+    if (psf >= 100) {
+      return '\$${formatNumber(psf.round())} psf';
+    }
+    return '\$${psf.toStringAsFixed(2)} psf';
+  }
 }
