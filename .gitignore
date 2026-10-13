@@ -43,3 +43,8 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Internal study notes & interview prep (not part of project definition)
+docs/INTERVIEW_PREP.md
+docs/CODE_EXPLAINED.md
+docs/Agents.md

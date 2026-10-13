@@ -8,17 +8,20 @@ A cross-platform Flutter application built as a take-home technical evaluation f
 
 - **Search Results Screen:**
   - Live property listings retrieved via Firebase REST API (`GET /listings.json`).
-  - Pixel-accurate property cards with 16:9 cached preview images, soft elevation shadows, and formatted stats.
+  - Pixel-accurate property cards with 16:9 cached preview images, soft elevation shadows, 60px bottom photo gradient overlay (`photoOverlay`), and formatted stats.
   - Pull-to-refresh (`RefreshIndicator`) and interactive ripple effects.
   - Responsive layout constrained to `600px` max width for tablet viewports.
   - Complete feedback states: `LoadingView`, `ErrorView` with retry action, and `EmptyView`.
 
 - **Listing Detail Screen:**
   - Full-width hero photograph with `Hero` transition animation connected to the search card.
-  - Overlaid contrast-safe back navigation over a subtle dark gradient scrim.
+  - Dual 90px top/bottom gradient overlays (`heroOverlay`) ensuring high-contrast back navigation within `SafeArea`.
   - Formatted pricing, project title, and dual address subtitles.
-  - **"View on map"** action launching external device maps at precise coordinates with `url_launcher`.
-  - Dynamic **"Property details"** specification table adapting to backend fields.
+  - **"View on map"** action launching external device maps at precise coordinates with `url_launcher` and `if (context.mounted)` safety.
+  - Standardized **"Property details"** section with 9 exact specification rows matching Figma:
+    - `Price/sqft` calculated dynamically from `price / area_size`
+    - `Floor level`, `Furnishing`, `Facing`, `Overlooking View`, `Built year (TOP)`, `Tenure`, `Property type` (derived from listing title), `Last updated`
+    - Equal 50/50 flex split (`flex: 6` each) with labels in 16px w500 and values in 16px w400.
   - **"Description"** section clamped to 5 lines with an interactive "Read more / Show less" toggle.
 
 ---
@@ -114,7 +117,7 @@ flutter pub get
    ```
 
 ### Running Tests & Static Analysis
-Run all 47 unit, widget, and integration tests:
+Run all 51 unit, widget, and integration tests:
 ```bash
 flutter test
 ```
@@ -136,12 +139,12 @@ The resulting APK will be located at:
 
 ## 🧪 Test Coverage Summary
 
-The project includes **47 comprehensive automated tests**:
+The project includes **51 comprehensive automated tests**:
 - **Data & Models (`test/data/`):** Happy path JSON deserialization, defensive double/int type coercion, missing field exceptions (`ParseException`).
 - **Network & Service (`test/data/`):** Mock HTTP client simulating HTTP 200, HTTP 500, network timeouts, offline `SocketException`, and Firebase `null` response detection (`NotFoundException`).
 - **Repository (`test/data/`):** Verifies clean contract delegation using `mocktail`.
 - **ViewModels (`test/features/`):** State transitions (`Loading` $\rightarrow$ `Success`, `Loading` $\rightarrow$ `Failure`), retry recovery, description expansion toggle.
-- **Widgets & Navigation (`test/features/`):** Verifies `LoadingView`, `ErrorView`, `EmptyView`, `ListingCard` rendering, responsive text clamping, and full navigation flow from list to detail and back.
+- **Widgets & Navigation (`test/features/`):** Verifies `LoadingView`, `ErrorView`, `EmptyView`, `ListingCard` photo overlays, `DetailHero` dual gradients, `PropertyDetailsSection` 9 standardized rows, responsive text clamping, and full navigation flow from list to detail and back.
 
 ---
 
@@ -158,14 +161,11 @@ If expanding this application for a full commercial launch:
 
 ## 📚 Project Documentation
 
-All detailed project specifications, architectural guides, and study notes are organized inside the `docs/` folder:
+The core specifications and architectural design documents are maintained in the `docs/` folder:
 
 | Document | Description |
 |---|---|
-| [docs/PRD.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/PRD.md) | Product Requirements Document, endpoints, data contract quirks, and checklist |
-| [docs/Architecture.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/Architecture.md) | Layered architecture, MVVM implementation, state management, and testing strategy |
-| [docs/Design_System.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/Design_System.md) | Color palette, typography scale (Avenir Next), 4pt grid spacing, and component specs |
-| [docs/CODE_EXPLAINED.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/CODE_EXPLAINED.md) | Step-by-step technical walkthroughs for every file in the codebase |
-| [docs/INTERVIEW_PREP.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/INTERVIEW_PREP.md) | Architecture Q&A list and 5-minute technical interview presentation script |
-| [docs/DECISIONS.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/DECISIONS.md) | Log of architectural trade-offs, package choices, and font selections |
-| [docs/Agents.md](file:///Users/rama-prodjowijono/99%20Group%20Project/docs/Agents.md) | Coding standards, teach-as-you-go methodology, and milestone definitions |
+| [docs/PRD.md](docs/PRD.md) | Product Requirements Document, endpoints, data contract specifications, and checklist |
+| [docs/Architecture.md](docs/Architecture.md) | Layered architecture, MVVM implementation, state management, and testing strategy |
+| [docs/Design_System.md](docs/Design_System.md) | Color palette, typography scale (Avenir Next), 4pt grid spacing, and component specs |
+| [docs/DECISIONS.md](docs/DECISIONS.md) | Log of architectural trade-offs, package choices, and font selections |

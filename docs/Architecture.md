@@ -70,8 +70,10 @@ lib/
         ├── listing_detail_page.dart
         └── widgets/ (detail_hero.dart, price_header.dart, property_details_section.dart, expandable_description.dart)
 test/
-├── data/ (listing_model_test.dart, listing_repository_impl_test.dart)
-└── features/ (search_results_view_model_test.dart, listing_detail_view_model_test.dart)
+├── core/ (formatters_test.dart)
+├── data/ (listing_model_test.dart, listing_detail_model_test.dart, listing_api_service_test.dart, listing_repository_impl_test.dart)
+├── features/ (search_results_view_model_test.dart, search_results_page_test.dart, listing_detail_view_model_test.dart, listing_detail_page_test.dart, navigation_flow_test.dart, detail_hero_test.dart, property_details_section_test.dart)
+└── widget_test.dart (smoke test)
 ```
 
 ## 4. Models
@@ -212,18 +214,24 @@ Pages create their ViewModel via `ChangeNotifierProvider(create: (_) => getIt<Se
 | Bad JSON shape | `ParseException` | "Unexpected data from server" |
 | Detail `null` | `NotFoundException` | "Listing not found" |
 
-## 11. Testing plan
-| Test | Verifies |
+## 11. Testing plan (51 Automated Tests)
+| Test Suite | Verifies |
 |---|---|
-| `Listing.fromJson` | Maps sample JSON; handles int/double; throws `ParseException` on missing key |
-| `ListingDetail.fromJson` | Coordinates, dynamic `property_details` list |
-| `ListingRepositoryImpl` | Delegates to service (mocked) |
-| `SearchResultsViewModel` | `Loading → Success`, `Loading → Failure`, retry works (mock repo) |
-| `ListingDetailViewModel` | Same + `toggleDescription` |
-| Formatters | `$2,561/mo`, `1 Bed` vs `2 Beds` |
-| (stretch) widget test | `ListingCard` renders formatted texts |
+| `formatters_test.dart` | Formats price, area, bedroom/bathroom pluralization, and price/sqft |
+| `listing_model_test.dart` | JSON deserialization, int/double coercion, `ParseException` on missing keys |
+| `listing_detail_model_test.dart` | Coordinates parsing, property details map, malformed response handling |
+| `listing_api_service_test.dart` | HTTP 200, HTTP 500, timeout handling, Firebase null handling (`NotFoundException`) |
+| `listing_repository_impl_test.dart` | Delegation to `ListingApiService` for listings and details |
+| `search_results_view_model_test.dart` | `Loading → Success`, `Loading → Failure`, pull-to-refresh without screen blanking |
+| `listing_detail_view_model_test.dart` | `Loading → Success`, `Loading → Failure`, description expand/collapse toggle |
+| `search_results_page_test.dart` | Renders `LoadingView`, `ErrorView` with retry, `EmptyView`, `ListingCard` with photo overlay |
+| `listing_detail_page_test.dart` | Detail loading, error retry, maps link launching with `context.mounted` check |
+| `listing_card_test.dart` | Photo 60px bottom overlay, ink ripple, formatted stats rendering |
+| `detail_hero_test.dart` | Hero image tag, dual 90px top/bottom gradient overlays, safe back button |
+| `property_details_section_test.dart` | 9 standardized rows in exact order, dynamic Price/sqft calculation, 50/50 flex layout |
+| `navigation_flow_test.dart` | End-to-end integration: card tap → detail view → pop back to search list |
 
-Run: `flutter test`.
+Run: `flutter test` (all 51 tests pass cleanly).
 
 ## 12. Packages (`pubspec.yaml`)
 ```yaml
