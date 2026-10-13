@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'core/theme/app_theme.dart';
+import 'features/search_results/search_results_page.dart';
 
 /// The root widget of the application.
 ///
 /// Configures MaterialApp, light theme tokens, and sets up
-/// the initial route / home screen.
+/// the initial route (defaults to [SearchResultsPage]).
 class NinetyNineApp extends StatelessWidget {
+  /// Optional home widget, allowing override in widget tests.
+  final Widget? home;
+
   /// Creates the root [NinetyNineApp] instance.
-  const NinetyNineApp({super.key});
+  const NinetyNineApp({super.key, this.home});
 
   @override
   Widget build(BuildContext context) {
@@ -15,33 +19,7 @@ class NinetyNineApp extends StatelessWidget {
       title: '99.co Mobile Exercise',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
-      home: const _PlaceholderHomeScreen(),
-    );
-  }
-}
-
-/// Initial placeholder screen for Milestone 1 verification.
-///
-/// Will be replaced with SearchResultsPage in Milestone 3.
-class _PlaceholderHomeScreen extends StatelessWidget {
-  const _PlaceholderHomeScreen();
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Search Results'),
-        bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(1.0),
-          child: Container(
-            color: Theme.of(context).dividerTheme.color,
-            height: 1.0,
-          ),
-        ),
-      ),
-      body: const Center(
-        child: Text('Milestone 1: Scaffold & Theme Ready'),
-      ),
+      home: home ?? const SearchResultsPage(),
     );
   }
 }

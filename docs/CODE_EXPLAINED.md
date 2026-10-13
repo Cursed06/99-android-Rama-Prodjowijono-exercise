@@ -158,3 +158,104 @@ Study notes for explaining every file in the codebase during a technical intervi
 **Kotlin/Android analogy:** Repository interface and repository implementation in Android Clean Architecture.
 **Why this way (and the alternative):** An abstract repository decouples the presentation layer from the network layer, allowing unit tests to substitute mocks easily and future caching to be added without touching ViewModels.
 **Likely interview question:** "Why have both a Service and a Repository if the Repository only delegates today?" → "Separation of concerns: the service handles raw HTTP communication and deserialization, while the repository provides a domain abstraction where caching, offline persistence, and data transformation can be added later without modifying UI or ViewModels."
+
+---
+
+## Milestone 3: Search Results Screen (ViewModel + UI)
+
+### 📘 Walkthrough: `lib/core/utils/formatters.dart`
+**Role in the architecture:** Utilities layer (`core/utils`); handles all price, area, bedroom/bathroom, tenure, and string formatting logic.
+**How it works (step by step):**
+1. Uses `intl` `NumberFormat.decimalPattern()` to insert thousands separators into integers.
+2. Formats card rental price (`$2,561/mo`) and detail price (`$2,561`).
+3. Formats pluralized beds and baths (`1 Bed` vs `3 Beds`, `1 Bath` vs `2 Baths`).
+4. Joins compound metadata rows using centered dots (`·`).
+**Key Dart/Flutter concepts used:**
+- `intl`: Standard internationalization package providing locale-aware number formatting.
+- `abstract final class`: Static utility namespace preventing instantiation.
+**Kotlin/Android analogy:** Extension functions or helper objects like `CurrencyFormatter.kt`.
+**Why this way (and the alternative):** Formatting text directly inside widget build methods scatters business rules and prevents unit testing; a dedicated helper is pure, isolated, and tested.
+**Likely interview question:** "Why isolate text formatting into a utility class?" → "Isolating formatting logic keeps widgets declarative and concise, prevents duplicated string-manipulation logic, and allows comprehensive unit test coverage without pumping widgets."
+
+---
+
+### 📘 Walkthrough: `lib/core/state/ui_state.dart`
+**Role in the architecture:** State layer (`core/state`); provides a sealed hierarchy modeling asynchronous screen states.
+**How it works (step by step):**
+1. Declares a base `sealed class UiState<T>`.
+2. Defines `Loading<T>`, `Success<T>(data)`, and `Failure<T>(message, cause)`.
+3. Ensures widgets can switch on `state` with compile-time exhaustiveness checking.
+**Key Dart/Flutter concepts used:**
+- `sealed class`: In Dart 3, restricts subclassing to the current library, enabling pattern-matching switches with no need for a default branch.
+- Generics (`<T>`): Allows `UiState` to wrap any domain payload (`List<Listing>`, `ListingDetail`, etc.).
+**Kotlin/Android analogy:** Kotlin `sealed interface UiState<out T>` (Loading, Success, Error).
+**Why this way (and the alternative):** The alternative is multiple boolean flags (`isLoading`, `errorMessage`, `data`), which can enter invalid states (e.g. `isLoading == true` AND `errorMessage != null`); sealed states make invalid visual states unrepresentable.
+**Likely interview question:** "Why use a sealed class for UI state instead of boolean flags?" → "A sealed class represents mutually exclusive states (`Loading`, `Success`, `Failure`), eliminating impossible states (such as loading and error at the same time) and allowing Dart's exhaustive switch pattern matching."
+
+---
+
+### 📘 Walkthrough: `lib/core/widgets/loading_view.dart`, `error_view.dart`, `empty_view.dart`
+**Role in the architecture:** Shared presentation layer (`core/widgets`); reusable feedback components across all app screens.
+**How it works (step by step):**
+1. `LoadingView`: Centers a `CircularProgressIndicator` tinted with `AppColors.accent`.
+2. `ErrorView`: Presents an error icon, user-friendly message, and a styled `FilledButton` calling an `onRetry` callback.
+3. `EmptyView`: Displays a muted icon and "No listings found" copy.
+**Key Dart/Flutter concepts used:**
+- `VoidCallback`: Signature for zero-argument callbacks (e.g. `onRetry`).
+- Component reuse: Single source of truth for loading, error, and empty views.
+**Kotlin/Android analogy:** Reusable Composable screens (`LoadingScreen`, `ErrorScreen`, `EmptyScreen`).
+**Why this way (and the alternative):** Centralizing error and loading widgets ensures unified visual branding and eliminates redundant styling across screens.
+**Likely interview question:** "How do you ensure UI state consistency across multiple screens in Flutter?" → "By building shared feedback components (`LoadingView`, `ErrorView`, `EmptyView`) in the core design layer and binding them uniformly to the ViewModel's `UiState`."
+
+---
+
+### 📘 Walkthrough: `lib/features/search_results/search_results_view_model.dart`
+**Role in the architecture:** ViewModel layer (`features/search_results`); manages UI state and user actions for the search screen.
+**How it works (step by step):**
+1. Extends `ChangeNotifier` to notify observing widgets of state transitions.
+2. Accepts `ListingRepository` via constructor injection (no direct `getIt` call).
+3. `load()` sets state to `Loading()`, invokes `notifyListeners()`, calls `_repository.getListings()`, and sets state to `Success(data)` or `Failure(e.message)`.
+4. `refresh()` re-queries listings for pull-to-refresh without wiping the screen to a full spinner.
+**Key Dart/Flutter concepts used:**
+- `ChangeNotifier`: A class that can be extended or mixed in to provide a change notification API.
+- `notifyListeners()`: Triggers rebuilds for all widgets subscribed via `context.watch` or `Consumer`.
+**Kotlin/Android analogy:** Android `ViewModel` exposing a `StateFlow<UiState>`.
+**Why this way (and the alternative):** Keeping business logic in the ViewModel keeps widgets purely declarative and makes data orchestration testable in pure Dart unit tests.
+**Likely interview question:** "How does `SearchResultsViewModel` communicate state updates to the UI?" → "It extends `ChangeNotifier` and calls `notifyListeners()`, which signals `provider` to rebuild widgets observing the ViewModel via `context.watch<SearchResultsViewModel>()`."
+
+---
+
+### 📘 Walkthrough: `lib/features/search_results/widgets/listing_card.dart`
+**Role in the architecture:** Presentation widget (`features/search_results/widgets`); renders individual property listing cards.
+**How it works (step by step):**
+1. Renders a white container with 12px corner radius (`AppSpacing.radiusCard`) and soft shadow (`AppColors.shadow`).
+2. Displays an inset 16:9 aspect ratio photo with 8px radius (`AppSpacing.radiusImage`).
+3. Uses `CachedNetworkImage` with custom placeholder spinner and broken-image fallback icon.
+4. Wraps the image in a `Hero` widget (`listing-photo-$id`) for seamless transition to detail view.
+5. Formats titles, address, tenure, stats, and prices with `AppTextStyles` and `Formatters`.
+6. Wraps card content in an `InkWell` to deliver Material ink splash feedback on tap.
+**Key Dart/Flutter concepts used:**
+- `AspectRatio(aspectRatio: 16 / 9)`: Automatically calculates image height based on available card width.
+- `CachedNetworkImage`: Handles memory and disk caching of network images with placeholders.
+- `Hero`: Enables shared element transition animations between two screens.
+**Kotlin/Android analogy:** `@Composable ListingCard` using Coil/Glide for asynchronous image loading.
+**Why this way (and the alternative):** Encapsulating the card in its own widget avoids bloating the screen file beyond the 150-line guideline and facilitates standalone testing.
+**Likely interview question:** "Why use `CachedNetworkImage` over `Image.network`?" → "`CachedNetworkImage` provides automatic disk and memory caching, customizable loading placeholders, and error fallback widgets, preventing re-downloading images on every list scroll."
+
+---
+
+### 📘 Walkthrough: `lib/features/search_results/search_results_page.dart`
+**Role in the architecture:** Screen layer (`features/search_results`); main UI page for search results.
+**How it works (step by step):**
+1. Provides optional constructor parameters (`viewModel`, `onListingSelected`) so tests can inject fakes without initializing `getIt`.
+2. Employs `ChangeNotifierProvider` to scope the ViewModel lifecycle to the widget tree.
+3. Uses Dart 3 `switch (viewModel.state)` to exhaustively map `Loading()`, `Failure()`, and `Success()`.
+4. Wraps content inside `ConstrainedBox(maxWidth: AppSpacing.maxContentWidth)` to ensure tablet responsiveness.
+5. Integrates `RefreshIndicator` over `ListView.separated` for native pull-to-refresh.
+**Key Dart/Flutter concepts used:**
+- `context.watch<T>()`: Subscribes the widget to listen for changes from the nearest ancestor provider of type `T`.
+- Dart 3 pattern matching switch: `switch (viewModel.state) { Loading() => ..., Success(:final data) => ... }`.
+- `ListView.separated`: Lazily builds list items as they scroll into view, separated by fixed vertical spacing.
+**Kotlin/Android analogy:** Composable Screen function observing `val uiState by viewModel.uiState.collectAsState()`.
+**Why this way (and the alternative):** Using `ListView.separated` lazily creates only visible cards in memory, providing high performance even if hundreds of listings exist.
+**Likely interview question:** "How do you ensure responsive tablet layout in Flutter?" → "By constraining the body with `ConstrainedBox(maxWidth: 600)` and wrapping it in `Center()`, preventing listing cards from stretching excessively on wide screens."

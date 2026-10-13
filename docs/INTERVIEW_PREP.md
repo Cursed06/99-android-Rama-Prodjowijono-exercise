@@ -34,6 +34,12 @@ Comprehensive technical questions, architectural reasoning, and trade-offs to ac
 ### Q5: How do you handle Firebase returning HTTP 200 with `null` body?
 **Answer:** Firebase Realtime Database returns HTTP status 200 with a body string of `"null"` when querying a non-existent document key (e.g. `/details/999.json`). Our `ListingApiService` explicitly decodes the body and checks if `data == null`, throwing a `NotFoundException` which maps to a friendly "Listing not found" UI state.
 
+### Q6: How does `UiState` with Dart 3 pattern matching improve Flutter UI architecture?
+**Answer:** Using a sealed class hierarchy (`sealed class UiState<T>`) guarantees that visual states (`Loading`, `Success`, `Failure`) are mutually exclusive, eliminating buggy multi-boolean flag bugs (such as `isLoading && hasError`). Dart 3's `switch (viewModel.state)` provides compile-time exhaustiveness checks so every state must be handled without needing a fragile `default` branch.
+
+### Q7: Why use `ListView.separated` and tablet width constraints in the list view?
+**Answer:** `ListView.separated` provides viewport virtualization, lazily building only the cards currently visible on screen to conserve memory and maintain 60/120 FPS scrolling. Constraining the list body with `ConstrainedBox(maxWidth: AppSpacing.maxContentWidth)` and centering it ensures that on large screens or tablets, listing cards do not stretch into unreadable wide banners.
+
 ---
 
 ## 3. Known Quirks & Data Contracts (PRD §3.3)
